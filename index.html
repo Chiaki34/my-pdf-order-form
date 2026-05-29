@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>不動産案件管理システム導入のご提案</title>
+    
+    <!-- ファビコン（🐢） -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='70' font-size='70'%3E%F0%9F%90%A2%3C/text%3E%3C/svg%3E" type="image/svg+xml">
+
     <style>
         * {
             margin: 0;
@@ -14,45 +18,38 @@
             height: 100%;
             width: 100%;
             overflow: hidden;
+            touch-action: pan-y; /* 上下スクロールのみ許可 */
         }
         .pdf-container {
             width: 100%;
             height: 100vh;
-            overflow: auto;
+            overflow-x: hidden;    /* 横スクロール完全禁止 */
+            overflow-y: auto;      /* 上下スクロールのみ許可 */
             -webkit-overflow-scrolling: touch;
         }
-        iframe {
-            width: 100%;
-            height: 100%;
+        object {
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto;
             border: none;
             display: block;
         }
 
-        /* スマホ向け：PDFを画面幅に強制フィット */
+        /* スマホ専用調整 */
         @media (max-width: 768px) {
-            .pdf-container {
-                overflow-x: hidden;           /* 横スクロール禁止 */
-            }
-            iframe {
+            object {
                 width: 100% !important;
-                min-width: 100% !important;
-                max-width: 100% !important;
-                height: 100%;
-            }
-        }
-
-        /* PC向け：画面いっぱい */
-        @media (min-width: 769px) {
-            iframe {
-                width: 100%;
-                height: 100vh;
+                height: auto !important;
             }
         }
     </style>
 </head>
 <body>
     <div class="pdf-container">
-        <iframe src="document1.pdf" type="application/pdf"></iframe>
+        <object data="document1.pdf" type="application/pdf">
+            <!-- iframeをフォールバックとして使用 -->
+            <iframe src="document1.pdf" style="width:100%; height:100vh; border:none;"></iframe>
+        </object>
     </div>
 </body>
 </html>
