@@ -14,6 +14,7 @@
             height: 100%;
             width: 100%;
             overflow: hidden;
+            background: #f8f8f8;
         }
         .pdf-container {
             width: 100%;
@@ -22,13 +23,12 @@
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             touch-action: pan-y;
-            background: #f8f8f8;
         }
         .pdf-page {
             width: 100%;
             max-width: 100%;
-            margin: 0 auto 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 0 auto 15px auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             display: block;
         }
     </style>
@@ -36,38 +36,49 @@
 <body>
     <div class="pdf-container" id="pdfContainer"></div>
 
-    <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
+        // PDF.jsの設定を強化
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        const url = 'document1.pdf';
+        async function loadPDF() {
+            try {
+                const url = 'document1.pdf';
+                const pdf = await pdfjsLib.getDocument({
+                    url: url,
+                    disableAutoFetch: true,
+                    disableStream: true
+                }).promise;
 
-        async function loadAllPages() {
-            const pdf = await pdfjsLib.getDocument(url).promise;
-            const container = document.getElementById('pdfContainer');
+                const container = document.getElementById('pdfContainer');
 
-            for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const scale = 1.8;  // スマホでも見やすいサイズ
-                const viewport = page.getViewport({ scale: scale });
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const scale = window.innerWidth < 768 ? 1.5 : 2.0;  // スマホは少し小さめに
+                    const viewport = page.getViewport({ scale: scale });
 
-                const canvas = document.createElement('canvas');
-                canvas.className = 'pdf-page';
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
+                    const canvas = document.createElement('canvas');
+                    canvas.className = 'pdf-page';
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
 
-                const context = canvas.getContext('2d');
-                await page.render({ canvasContext: context, viewport: viewport }).promise;
+                    const ctx = canvas.getContext('2d', { alpha: false });
+                    await page.render({ canvasContext: ctx, viewport: viewport }).promise;
 
-                container.appendChild(canvas);
+                    container.appendChild(canvas);
+                }
+            } catch (error) {
+                console.error(error);
+                document.getElementById('pdfContainer').innerHTML = 
+                    `<p style="padding:30px; color:#d32f2f; text-align:center;">
+                        PDFの読み込みに失敗しました。<br>
+                        <a href="document1.pdf" style="color:#1976d2;">PDFを直接ダウンロード</a>
+                    </p>`;
             }
         }
 
-        loadAllPages().catch(err => {
-            console.error(err);
-            document.getElementById('pdfContainer').innerHTML = '<p style="color:red;padding:20px;">PDFの読み込みに失敗しました。</p>';
-        });
+        // ページ読み込み後に実行
+        window.onload = loadPDF;
     </script>
 </body>
 </html>
