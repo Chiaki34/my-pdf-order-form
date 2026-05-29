@@ -19,7 +19,7 @@
             width: 100%;
             height: 100vh;
             overflow: auto;
-            -webkit-overflow-scrolling: touch; /* スマホのスクロールを滑らかに */
+            -webkit-overflow-scrolling: touch;
         }
         iframe {
             width: 100%;
@@ -27,13 +27,25 @@
             border: none;
             display: block;
         }
-        /* スマホ向け調整 */
+
+        /* スマホ向け：PDFを画面幅に強制フィット */
         @media (max-width: 768px) {
             .pdf-container {
-                height: 100vh;
+                overflow-x: hidden;           /* 横スクロール禁止 */
             }
             iframe {
-                min-height: 100vh;
+                width: 100% !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                height: 100%;
+            }
+        }
+
+        /* PC向け：画面いっぱい */
+        @media (min-width: 769px) {
+            iframe {
+                width: 100%;
+                height: 100vh;
             }
         }
     </style>
