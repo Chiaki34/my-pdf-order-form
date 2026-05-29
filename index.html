@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>不動産案件管理システム導入のご提案</title>
     <style>
         * {
@@ -15,15 +15,32 @@
             width: 100%;
             overflow: hidden;
         }
-        iframe {
+        .pdf-container {
             width: 100%;
             height: 100vh;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch; /* スマホのスクロールを滑らかに */
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
             border: none;
             display: block;
+        }
+        /* スマホ向け調整 */
+        @media (max-width: 768px) {
+            .pdf-container {
+                height: 100vh;
+            }
+            iframe {
+                min-height: 100vh;
+            }
         }
     </style>
 </head>
 <body>
-    <iframe src="document1.pdf" type="application/pdf"></iframe>
+    <div class="pdf-container">
+        <iframe src="document1.pdf" type="application/pdf"></iframe>
+    </div>
 </body>
 </html>
